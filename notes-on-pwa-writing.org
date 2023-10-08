@@ -1,0 +1,14 @@
+#+title: Notes On PWA Writing
+* support offline
++ use service worker's Fetch and Cache APIs and local data storage.
+* local storage
++ cache storage - static resources
++ local/session storage - small amounts of user data
++ indexeddb - larger structured suser data
++ file system access API - files on disk
+* look native
++ big header/footer :( - app menu/navigator bottom pane :)
++ system-ui font
++ less link, more botton
++ light/dark themes - prefers-color-scheme [[https://developer.mozilla.org/docs/Web/CSS/@media/prefers-color-scheme][link]]
++ background-color and theme-color in the manifest. - customize application window

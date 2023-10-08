@@ -34,7 +34,7 @@ a Booster is ~(condition . booster)~
 ** Tracker [future]
 an tracker of events that are not clockable, like for each time drinking a cup of water, how long and how many times in total have you practiced guitar today(if you are taking short-time many-times approach).
 * TODOS
-+ [-] Prototype of elementary PWA app
++ [X] Prototype of elementary PWA app
 + [ ] Data model: Event
 + [ ] populate a list
 + [ ] Displaying Event
@@ -45,3 +45,43 @@ an tracker of events that are not clockable, like for each time drinking a cup o
 + [ ] Countdown Timer on Current Event
 + [ ] Able to switch Current Event
 + [ ] CountDown Timer on Current Event (or used-to-be Current Event)
+
+* running the project
+
+This project works on shadow-cljs.
+
+the file structure is created with ~npx create-cljs-project kernel-routine~
+** dependencies
+you need to install react@17.0.2 with reagent@
+#+begin_src shell
+npm install react@17.0.2 react-dom@17.0.2
+#+end_src
+** commands
+#+begin_src shell
+npx shadow-cljs browser-repl
+#+end_src
+give you an in-terminal repl connected to a browser-repl. It is not terribly useful
+
+#+begin_src shell
+npx shadow-cljs watch app
+#+end_src
+watch the build scheme ~app~ as literated in shadow-cljs.edn. If any file is modified, it will recompile the js codes and reload them. (not refresh)
+
+If some dependencies' missing, this would fix it too.
+
+
+#+begin_src shell
+npx shadow-cljs release app
+#+end_src
+compile a better version for release - slow, one file, and slim code
+
+#+begin_src shell
+npx shadow-cljs server app
+#+end_src
+serves the current version of code
+** publish
+after it is compiled, only ~public/index.html~, ~public/manifest.json~, ~public/sw.js~ and ~public/app/js/main.js~ is required.
++ only task of ~public/sw.js~ is to cache the website and prefer cache in every time.
+* resource
++ https://ericnormand.me/guide/clojurescript-tutorial
++ [[https://learn.microsoft.com/en-us/microsoft-edge/progressive-web-apps-chromium/how-to/][Microsoft PWA tutorial]] - the best and simplest hands-on guide I've seen so far.
