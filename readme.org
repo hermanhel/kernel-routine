@@ -1,0 +1,47 @@
+#+title: Readme
+
+This is an mobile-device focused PWA that provide you with options at any point of day that are based on a set of events with conditions.
+* concepts
+** Event
+~Event~ is an event. It includes, comprehensively:
++ title, description, unique id.
++ trigger - a predicate, determining when the event is seen a valid options
++ discarding - what other events this event is conflicted with
++ duration - the estimated duration of the event.
++ cooldown - how long before it could be scheduled again.
++ discarded, current - bool properties to mark the event as
+*** trigger
+a predicate function. ~absolute-clock~ and ~relative-clock~ are specially useful components of the trigger:
++ ~absolute-clock~ the time of the day.
++ ~relative-clock~ the time since another event have finished. [future: started also].
+*** Speicial Events
++ Wake up - the start of all events
++ Sleep away - the end of all events, and clears the relative clock list.
+*** discarding
+a list of unique ids of other events that this event, when chosen, would discard.
+*** discard
+an event would be discarded once it is finished.
+*** cooldown
++ -1 imply the event is not recurring
++ a positive value ~n~ imply the event could be scheduled again after ~n~ milliseconds, after which the ~discarded~ property of it would be set to false again.
++ example: I have a routine of checking my agenda every 2 hours, then I could set a ~check agenda~ event with ~cooldown~ of ~2 * 60 * 60 * 1000~ cooldown.
+** Kernel routine
+a set of aforementioned events. The order is not relevent, as ~Wake Up~ would be the common start point and events would be tested for trigger.
+** Log [future]
+an log that records times of Events
+** Booster [future]
+a Booster is ~(condition . booster)~
+** Tracker [future]
+an tracker of events that are not clockable, like for each time drinking a cup of water, how long and how many times in total have you practiced guitar today(if you are taking short-time many-times approach).
+* TODOS
++ [-] Prototype of elementary PWA app
++ [ ] Data model: Event
++ [ ] populate a list
++ [ ] Displaying Event
++ [ ] Displaying Kernel Routine
++ [ ] Kernel Routine - Filter Logic
++ [ ] Current Event and Discarding
++ [ ] Use a Local Storage to persist state throughout the day
++ [ ] Countdown Timer on Current Event
++ [ ] Able to switch Current Event
++ [ ] CountDown Timer on Current Event (or used-to-be Current Event)
