@@ -6,6 +6,8 @@
     "start_url": "/",
     "background_color": "#2f3d58",
     "theme_color": "#2f3d58",
+    // "background_color": "#374151",
+    // "theme_color": "#374151",
     "orientation": "any",
     "display": "standalone",
     "icons": [

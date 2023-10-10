@@ -31,30 +31,58 @@ a set of aforementioned events. The order is not relevent, as ~Wake Up~ would be
 an log that records times of Events
 ** Booster [future]
 a Booster is ~(condition . booster)~
+** Notes
++ could make trigger-func return trigger-text, so I could merge versions of tasks that only differ in trigger to 1, and they can have the corresponding trigger-text displayed.
 ** Tracker [future]
 an tracker of events that are not clockable, like for each time drinking a cup of water, how long and how many times in total have you practiced guitar today(if you are taking short-time many-times approach).
+** Reminder [future]
+a list of little reminders that is valid throughout the day(or as defined in it's trigger). like "remember to log what happened", "observe the surroundings", "drink dfsdfasdfwefadfasdf"
+** Routine editor [future]
++ edit, add and delete Events
++ Define routines as a sets of events
+  so that I could have versions of the same routine over iterations (Hubermanv1, Hubermanv2...) and different routines to switch for func (Madmanv1)
++ Allow routine to include routine
+  an example of usage is, I have an overall routine that includes Hubermanv1 as the general framework, Waterintakev2, Scholarlyv2 and Agendacheckv3 as plugin.
+  Note that the handling of Wake and Sleep may be issue. Maybe set a special trigger for them, or set option/property to identify nature(i.e. say so in the data of the event)
++ allow routine to include patch
+  like, delete that routine, add this routine, modify that Event. This is complex, and not too useful as I see it now. may not implement it
+** Graph editor interface [future]
+a graph editor where you can see the relations/paths between the events clearly, and maybe add relationship/event in there(modify triggers, add triggers)
+may have to change the way triggers work(i.e. have a list of triggers working on AND or OR).
+** Configuration File [future]
+Make the system can be configured with a configuration file
 * TODOS
 + [X] Prototype of elementary PWA app
-+ [ ] Data model: Event
-+ [ ] populate a list
-+ [ ] Displaying Event
-+ [ ] Displaying Kernel Routine
-+ [ ] Kernel Routine - Filter Logic
-+ [ ] Current Event and Discarding
++ [X] Data model: Event
++ [X] populate a list
++ [X] Displaying Event
++ [X] Displaying Kernel Routine
++ [X] Kernel Routine - Filter Logic
++ [X] Able to switch Current Event
++ [X] Current Event and Discarding
++ [X] Relative Clock
++ [ ] add trigger to the data
 + [ ] Use a Local Storage to persist state throughout the day
-+ [ ] Countdown Timer on Current Event
-+ [ ] Able to switch Current Event
-+ [ ] CountDown Timer on Current Event (or used-to-be Current Event)
++ [X] Countdown Timer on Current Event
++ [X] CountDown Timer on Current Event (or used-to-be Current Event)
 
 * running the project
 
-This project works on shadow-cljs.
+This project works on shadow-cljsl, reagent, and tailwindcss
 
 the file structure is created with ~npx create-cljs-project kernel-routine~
 ** dependencies
 you need to install react@17.0.2 with reagent@
 #+begin_src shell
 npm install react@17.0.2 react-dom@17.0.2
+#+end_src
+
+For tailwindcss, install with instructions in [[https://tailwindcss.com/docs/installation][official guide]] slightly modified:
+#+begin_src shell
+npm install -D tailwindcss
+npx tailwindcss init
+
+npx tailwindcss -i ./src/css/tailwind.css -o ./public/output.css --watch
 #+end_src
 ** commands
 #+begin_src shell
@@ -82,6 +110,11 @@ serves the current version of code
 ** publish
 after it is compiled, only ~public/index.html~, ~public/manifest.json~, ~public/sw.js~ and ~public/app/js/main.js~ is required.
 + only task of ~public/sw.js~ is to cache the website and prefer cache in every time.
+
+* dev tips
+
+** repl
+Put the function call at start of application. It would not be repl exactly, but when you saved it, all codes get reloaded and that call would be evaluted and displayed at the top of your document, so pretty much equivallent for small testing and inspection.
 * resource
 + https://ericnormand.me/guide/clojurescript-tutorial
 + [[https://learn.microsoft.com/en-us/microsoft-edge/progressive-web-apps-chromium/how-to/][Microsoft PWA tutorial]] - the best and simplest hands-on guide I've seen so far.
