@@ -115,6 +115,22 @@ after it is compiled, only ~public/index.html~, ~public/manifest.json~, ~public/
 
 ** repl
 Put the function call at start of application. It would not be repl exactly, but when you saved it, all codes get reloaded and that call would be evaluted and displayed at the top of your document, so pretty much equivallent for small testing and inspection.
+
+* predicate language
+Due to I don't know how to set up ~read~ and function serialization in clojurescript(and the appearing complexity of it), I'm designing a predicate language for the triggers. In the end I hope I will get back to clojurescript trigger predicate, but for now, the predicate language, who does not have a name.
+
+this is clearly a very simple lisp, that does not have def or defn, only 2 built-in time predicate functions and 3 logical functions.
+
+** basic predicates
+"r wakeup 90" evaluate to true after event "wakeup" have finished for 90 minutes.
+"a 12" evaluate to true after 12:00
+
+** logical operators
+"not r wakeup 90" evaluate to true before event "wakeup" have finsed for 90 minutes, and nil after that.
+"and r wakeup 90 a 12" evaluate to true if event "wakeup" have finished for 90 minutes and it's past 12:00
+"or r wakeup 90 a 12" same, but with or.
+
+
 * resource
 + https://ericnormand.me/guide/clojurescript-tutorial
 + [[https://learn.microsoft.com/en-us/microsoft-edge/progressive-web-apps-chromium/how-to/][Microsoft PWA tutorial]] - the best and simplest hands-on guide I've seen so far.

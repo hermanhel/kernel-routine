@@ -1,57 +1,34 @@
 (ns kernel.core
   (:require [reagent.core :as r])
+  (:require [cljs.reader :as reader])
   (:require [reagent.dom :as dom])
   (:require [kernel.event :as event])
+  (:require [kernel.predicate-language :as pl])
   (:require [kernel.ui :as ui])
   (:require [kernel.eval :as eval])
   (:require [kernel.util :as util])
   (:require [kernel.relative-clock :as rc])
   (:require [cljs.js :as cljs])
-  (:require [cljs.reader :as reader])
-  )
-
-(defonce current-counts (r/atom []))
-
-(defn Counter [i counter]
-[:div ;;{:key (str i)}
-    counter
-    [:button
-     {:onClick (fn [] (swap! current-counts update i inc))}
-     "+1"]
-    [:button
-     {:onClick (fn [] (swap! current-counts update i dec))}
-     "-1"]
-    ]
+  (:require [kernel.db :as db ])
+  (:require [clojure.string :as cs])
+  (:require [promesa.core :as p])
   )
 
 
-(defonce Events event/routine)
 (defonce schedule
   (r/atom (doall (event/schedulize-routine event/routine)))
   )
 
 (defonce relative-clock-list (r/atom (list (list "" 0))))
 
-
-(defonce timers (r/atom {})) ;; the timer used in kernel is the kernel timer TODO one thing is that do I give each timer(kernel, boosters, cooldown...) a seperate interval, or do I get all timer to work in on "game-loop".
-
-(defn timer-on-event [key]
-  "count up every second. return a id that is used by js/clearInterval to stop the timer"
-  (js/setInterval
-   (fn []
-    (swap! schedule
-           #(map
-             (fn [event]
-               (if (= key (:key event))
-                 (update-in event [:time] inc)
-                 event
-                 )
-               )
-             %)
-           )
-     )
-   1000)
+(defn hard-reset []
+     (reset! relative-clock-list '())
+     (reset! schedule (doall (event/schedulize-routine event/routine)))
+     (db/assoc-local "schedule" schedule)
+     (db/assoc-local "relative-clock-list" relative-clock-list)
   )
+
+
 ;; TODO write a wrapper to update the schedule base on a key. `timer-on-event` and `kernel-event-on-click` have a part that is really similar
 (defn kernel-event-on-click [key]
   "when event key is clicked, do this on EVERY event in the routine"
@@ -67,6 +44,7 @@
                  ;; being the current event - discard
                  (do
                    (rc/relative-clock-add relative-clock-list (:key event))
+                   (db/assoc-local "relative-clock-list" relative-clock-list)
                    (update-in event [:discarded?] not)
                    ) ;; if it is clickable, discarded? is false
                  ;; not being the current event - now you are NOT not
@@ -84,10 +62,15 @@
            %
            )
          )
-
+  (db/assoc-local "schedule" schedule)
+  (when (= key "sleep")
+    (hard-reset)    )
+  ;; (.setItem db "schedule" (pr-str @schedule) (fn [_ val] (js/console.log "set value:" _ val)))
+  ;; (.setItem db "" (pr-str @schedule) (fn [_ val] (js/console.log "set value:" _ val)))
 
 
   )
+
 
 (defn swap-each [atom-coll fn]
   "map fn on every 1-level item of atom-coll. fn take 1 argument that is the 1-level item
@@ -110,16 +93,18 @@ usage: (swap-each schedule (update-in [:current true])) would change every first
 
 useful because react require :key, so I have one for each of the event, and I do identify them with it."
   )
-(defonce timer (r/atom 0))
 
 (defn big-loop []
   "game-loop-like loop, where all timer-based features are updated, like cooldown, booster cooldown, timer strings, progress animations..."
-  (swap! timer inc)
   (swap-each-p
    schedule
    (fn [event] (:current? event))
                #(update-in % [:time] inc)
                )
+  (db/assoc-local "schedule" schedule)
+  ;; (.setItem db "schedule" (pr-str @schedule) (fn [_ val]
+                                               ;; (js/console.log "set value:" _ val)
+                                                ;; ))
   )
 
 (defonce big-loop-interval
@@ -133,13 +118,24 @@ useful because react require :key, so I have one for each of the event, and I do
 
 
 
-(set-item! "herman" {:key (fn [] true)})
+(defn init []
+  "executed after refresh"
+  ;; (.getItem db "schedule" (fn [_ val]
+  ;;                           (reset! schedule (reader/read-string val))
+  ;;                           ))
+
+  (db/get-local "schedule" schedule)
+  (db/get-local "relative-clock-list" relative-clock-list)
+
+  )
 (defn Application []
 
   [:div {:class "bg-white dark:bg-gray-700 h-full"}
+   ;; (keyword schedule)
+   ;; @schedule
    [ui/Panel @schedule relative-clock-list kernel-event-on-click]
    ;; [Bottom-nav-bar]
-   [ui/Bottom-Label]
+   [ui/Bottom-Label hard-reset]
    ]
   )
 

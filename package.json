@@ -7,6 +7,7 @@
     "tailwindcss": "^3.3.3"
   },
   "dependencies": {
+    "localforage": "^1.10.0",
     "react": "^17.0.2",
     "react-dom": "^17.0.2"
   }

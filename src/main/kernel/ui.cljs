@@ -1,6 +1,8 @@
 (ns kernel.ui
   (:require [clojure.string :as s])
-  (:require [goog.string :as gstring])
+  (:require [goog.string :as gstring]
+            goog.string.format)
+  (:require [kernel.predicate-language :as pl])
   )
 
 (defn class-concat [x & xs])
@@ -29,19 +31,22 @@
     [:p {:class dim} duration]]
    ]
   ))
-(defn Bottom-Label []
-  [:div {:class "fixed bottom-0 w-full border-t bg-zinc-100 pb-safe dark:border-zinc-800 dark:bg-zinc-900"}
-   [:p {:class "h-16 text-zinc-500 text-center text-9xl"}"Kernel"]
+(defn Bottom-Label [on-click]
+  [:div {:onClick on-click :class "justify-content-center fixed bottom-0 h-40 w-full border-t bg-zinc-100 pb-safe dark:border-zinc-800 dark:bg-zinc-900"}
+   [:p {:class "content-center h-16 text-zinc-500 text-center text-9xl"}"KERNEL"]
    ]
   )
 
 (defn Panel [event-list relative-clock-list on-click]
-  [:div {:class "mt-0 p-5 flex-col space-y-5 h-full content-end justify-center bg-white dark:bg-gray-700"}
+  [:div {:class "mt-0 p-5 flex-col space-y-5 h-full content-end flex place-self-center bg-white dark:bg-gray-700"}
    (doall
     (for [schedule-event event-list]
-
-      (when (and ((:trigger-func schedule-event) relative-clock-list) (not (:discarded? schedule-event)))
-       [Card (:key schedule-event) (:title schedule-event) (:trigger-text schedule-event) (:duration schedule-event) on-click (:current? schedule-event) (:time schedule-event)])
+      ;; [:p
+       ;; (:trigger-func schedule-event)
+       ;; (str (pl/evaluate-string (:trigger-func schedule-event) relative-clock-list)) (str (not (:discarded? schedule-event))) ]
+      (when (and (pl/evaluate-string (:trigger-func schedule-event) relative-clock-list) (not (:discarded? schedule-event)))
+       [Card (:key schedule-event) (:title schedule-event) (:trigger-text schedule-event) (:duration schedule-event) on-click (:current? schedule-event) (:time schedule-event)]
+       )
       )
     )
    ;; [Card (:title wake-up)(:trigger wake-up)(:duration wake-up)]
