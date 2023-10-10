@@ -18,7 +18,7 @@ self.addEventListener('fetch', event => {
 
     // Get the resource from the cache.
     const cachedResponse = await cache.match(event.request);
-    if (!cachedResponse) { //prefer new version in development mode. changer !cachedResponse to cachedResponse when deploy
+    if (cachedResponse) { //prefer new version in development mode. changer !cachedResponse to cachedResponse when deploy
       return cachedResponse;
     } else {
       try {
