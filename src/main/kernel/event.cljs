@@ -9,7 +9,11 @@
   (list
     {:key "wakeup" :title "Wake Up" :description "" :trigger-text "nil" :trigger-func "(a 0)"
      :duration "5m" :cooldown -1 :discarding []}
+    {:key "workout-0" :title "Fat Burning Workout" :description "" :trigger-text "nil" :trigger-func "(r wakeup 0)"
+     :duration "20m" :cooldown -1 :discarding []}
     {:key "light" :title "Bright Light Viewing" :description "" :trigger-text "Wake Up" :trigger-func "(r wakeup 0)"
+     :duration "20m" :cooldown -1 :discarding []}
+    {:key "plan" :title "Embarking Plan Session" :description "" :trigger-text "Bright Light Viewing" :trigger-func "(r light 0)"
      :duration "20m" :cooldown -1 :discarding []}
     {:key "salt-water" :title "Salt Water Intake" :description "" :trigger-text "Wake Up" :trigger-func "(r wakeup 0)"
      :duration "5m" :cooldown -1 :discarding []}
@@ -62,6 +66,6 @@
 (defn schedulize-routine [routine]
   "routine does not store information on current and discarded, as they only make sense in the day.
 
-    return a list of Events, each have current? and discarded? initialized to nil"
-  (map (fn [event] (assoc event :current? nil :discarded? nil :time 0)) routine)
+    return a list of Events, each have current? and discarded? initialized to nil, and a log of empty list"
+  (map (fn [event] (assoc event :current? nil :discarded? nil :time 0 :log '())) routine) ;; in log is maps of {:start timestamp :end timestamp}
   )

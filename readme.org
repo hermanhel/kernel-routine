@@ -29,6 +29,12 @@ an event would be discarded once it is finished.
 a set of aforementioned events. The order is not relevent, as ~Wake Up~ would be the common start point and events would be tested for trigger.
 ** Log [future]
 an log that records times of Events
+** in-event triggering
++ a :time variable is exposed in the log. Could use some logic to define notification/behaviour on that.
+  i.e.: in workout, notify for end 5 minute before it should end; in focus session, notify for break/log every 30 minute
++ transparent to sessions: an event may be on and off severall times, the :time is still continuous
++ overide by external: may be add agenda support; but not very likely for it to be in collaboration with org-agenda, so I'd rather put that labour on man.
+  the in-event triggering could be overwritten by
 ** Booster [future]
 a Booster is ~(condition . booster)~
 ** Notes

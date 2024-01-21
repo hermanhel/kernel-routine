@@ -16,6 +16,7 @@
      )
   )
 
+
 (defn Card [key title trigger duration on-click current? time]
   (let [bg (if current? "bg-lime-500" "bg-white dark:bg-gray-800")
         dim (if current? "mb-1 font-normal text-5xl text-gray-700 dark:text-gray-700"  "mb-1 font-normal text-5xl text-gray-700 dark:text-gray-400" )]
@@ -23,7 +24,7 @@
          (s/join " " [bg "ml-8 w-11/12 p-6 border border-gray-200 rounded-lg shadow dark:border-gray-700"])}
    [:div {:class "flex justify-between"}
     [:p {:class dim} "→" trigger]
-    [:p {:class dim} (when (> time 0)(time-seconds-to-string time))]
+    [:p {:class dim} (when (< 0 time) (time-seconds-to-string time))]
     ]
 
    [:div {:class "flex justify-between"}

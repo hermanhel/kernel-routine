@@ -48,13 +48,24 @@
                    (update-in event [:discarded?] not)
                    ) ;; if it is clickable, discarded? is false
                  ;; not being the current event - now you are NOT not
-                 (update-in event [:current?] not)
+                 (-> event
+                   (update-in [:current?] not)
+                   (update-in [:log] (fn [logs] (cons {:start (.now js/Date)} logs)))
+                   )
                  )
                ;; not being the clicked event
                (if (:current? event)
                  ;; is current - now you're not
-                 (update-in event [:current?] not)
-               ;; is not current - return the event as is
+                 (-> event
+                  (update-in [:current?] not)
+                  (update-in [:log] (fn [logs] (let [current-log-entry (first logs)
+                                                     current-log-entry (assoc current-log-entry :end (.now js/Date))
+                                                     rest-log-entries (rest logs)
+                                                     updated-log-entries (cons current-log-entry rest-log-entries)]
+                                                 updated-log-entries
+                                                 )))
+                  )
+                 ;; is not current - return the event as is
                  event
                  )
                )
@@ -75,12 +86,12 @@
 (defn swap-each [atom-coll fn]
   "map fn on every 1-level item of atom-coll. fn take 1 argument that is the 1-level item
 usage: (swap-each schedule (update-in [:current true])) would change every first level item's :current value to true"
- (swap! atom-coll
-        #(map
-          fn
-          %
-          )
-        )
+  (swap! atom-coll
+         #(map
+           fn
+           %
+           )
+         )
   )
 
 (defn swap-each-p [atom-coll p update-fn]
@@ -94,17 +105,46 @@ usage: (swap-each schedule (update-in [:current true])) would change every first
 useful because react require :key, so I have one for each of the event, and I do identify them with it."
   )
 
+(def update-var (r/atom 0))
+(defn force-update []
+  "make a random update to an reagent atom, that force update to the ui"
+  (reset! update-var (rand))
+  )
+
+(defn time-sum [log-maps]
+  ;; TODO untested
+  "take a list of map like {:start 324124 :end 23423432}, apply (- :end :start), and sum the result"
+  (let
+      [sum (apply + (map (fn [log] (- (:end log) (:start log))) (rest log-maps) ))
+       the-current (if (:end (first log-maps)) (- (:end (first log-maps)) (:start (first log-maps)))
+                       (- (.now js/Date) (:start (first log-maps))))
+       sum (+ sum the-current)
+       sum (int (/ sum 1000))
+       ]
+    (js/console.log (str log-maps))
+    (js/console.log (.now js/Date) " - " (:start (first log-maps)))
+
+    (js/console.log "sum" (- (.now js/Date ) (:start (first log-maps))) "end")
+    sum
+  )
+  )
+
 (defn big-loop []
   "game-loop-like loop, where all timer-based features are updated, like cooldown, booster cooldown, timer strings, progress animations..."
   (swap-each-p
    schedule
    (fn [event] (:current? event))
-               #(update-in % [:time] inc)
-               )
+   (fn [event] (assoc-in event [:time]
+                         (time-sum
+                         (:log event)
+              ;; {:start 32 :end 42}
+              ))
+              ))
+
   (db/assoc-local "schedule" schedule)
   ;; (.setItem db "schedule" (pr-str @schedule) (fn [_ val]
-                                               ;; (js/console.log "set value:" _ val)
-                                                ;; ))
+  ;; (js/console.log "set value:" _ val)
+  ;; ))
   )
 
 (defonce big-loop-interval
@@ -133,6 +173,11 @@ useful because react require :key, so I have one for each of the event, and I do
   [:div {:class "bg-white dark:bg-gray-700 h-full"}
    ;; (keyword schedule)
    ;; @schedule
+
+  ;; (reduce (fn [elt rst] (+ rst (- (:end elt) (:start elt))))  '({:start 323 :end 353}) )
+  ;; (reduce (fn [elt rst] (:end elt) )  '({:start 323 :end 353}) )
+   ;; (:end {:start 323 :end 353})
+   ;; (ui/time-sum {:start 323 :end 353})
    [ui/Panel @schedule relative-clock-list kernel-event-on-click]
    ;; [Bottom-nav-bar]
    [ui/Bottom-Label hard-reset]

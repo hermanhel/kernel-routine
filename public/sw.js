@@ -1,4 +1,4 @@
-const CACHE_NAME = `kernel-routine-v1`;
+const CACHE_NAME = 'kernel-routine-v1';
 
 // Use the install event to pre-cache all initial resources.
 self.addEventListener('install', event => {
@@ -6,8 +6,9 @@ self.addEventListener('install', event => {
     const cache = await caches.open(CACHE_NAME);
     cache.addAll([
       '/',
+      "/index.html"
       '/app/js/main.js',
-      // '/converter.css'
+      '/output.css'
     ]);
   })());
 });
