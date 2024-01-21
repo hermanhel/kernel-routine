@@ -137,8 +137,6 @@ this is clearly a very simple lisp, that does not have def or defn, only 2 built
 "or r wakeup 90 a 12" same, but with or.
 
 
-* Export
-The export should be in the form of json object, including start, end and duration of each event
 * resource
 + https://ericnormand.me/guide/clojurescript-tutorial
 + [[https://learn.microsoft.com/en-us/microsoft-edge/progressive-web-apps-chromium/how-to/][Microsoft PWA tutorial]] - the best and simplest hands-on guide I've seen so far.
